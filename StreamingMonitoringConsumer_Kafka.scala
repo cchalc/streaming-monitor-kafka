@@ -9,6 +9,11 @@
 
 // COMMAND ----------
 
+// val kafka_bootstrap_servers_tls = "b-1.oetrta-kafka.oz8lgl.c3.kafka.us-west-2.amazonaws.com:9094,b-2.oetrta-kafka.oz8lgl.c3.kafka.us-west-2.amazonaws.com:9094"
+// val kafka_bootstrap_servers_plaintext = "b-1.oetrta-kafka.oz8lgl.c3.kafka.us-west-2.amazonaws.com:9092,b-2.oetrta-kafka.oz8lgl.c3.kafka.us-west-2.amazonaws.com:9092" 
+
+// COMMAND ----------
+
 // DBTITLE 1,Kafka Consumer
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
@@ -16,8 +21,9 @@ import org.apache.spark.sql.types._
 // Kafka Configs
 val startingOffsets = "earliest"
 val kafka_bootstrap_servers_tls       = dbutils.secrets.get( "oetrta", "kafka-bootstrap-servers-tls"       )
-val kafka_bootstrap_servers_plaintext = dbutils.secrets.get( "oetrta", "kafka-bootstrap-servers-plaintext" )
-val topic = "ssme_monitoring"
+val kafka_bootstrap_servers_plaintext = "b-1.oetrta-kafka.oz8lgl.c3.kafka.us-west-2.amazonaws.com:9092,b-2.oetrta-kafka.oz8lgl.c3.kafka.us-west-2.amazonaws.com:9092" 
+// val kafka_bootstrap_servers_plaintext = dbutils.secrets.get( "oetrta", "kafka-bootstrap-servers-plaintext" )
+val topic = "christopher_chalcraft_oetrta_kafka_test"
 
 // Streaming duration Log Schema 
 val durSchema = new StructType()
@@ -60,14 +66,18 @@ val mapInputStream = inputStream
 
 // COMMAND ----------
 
+display(mapInputStream, "monitoring_stream_1")
+
+// COMMAND ----------
+
 // DBTITLE 1,Delta Sink 
 import org.apache.spark.sql.streaming.Trigger
 
-val checkpoint = "/User/path"
-// val checkpoint = "/Users/hector.camarena@databricks.com/checkpoint/monitoring_tmp_cp"
+// val checkpoint = checkpoint_location
+val checkpoint = "/Users/christopher.chalcraft@databricks.com/checkpoint/monitoring_tmp_cp"
 
 val processingTime = "10 seconds"
-val tableSink = "database.table"
+val tableSink = "default.cjc_metrics"
 val queryName = "streaming_monitoring"
 
 
